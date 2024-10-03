@@ -1,5 +1,9 @@
 import 'package:antriku/help/help.dart';
+import 'package:antriku/screen/Dhasbroad.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/Auth/auth_bloc.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -34,8 +38,11 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController email = TextEditingController(text: "admin1");
+    TextEditingController password = TextEditingController(text: "admin");
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
+    var controller = context.read<AuthBloc>();
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -154,66 +161,91 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    SlideTransition(
-                      position: _offsetAnimation!,
-                      child: InkWell(
-                        onTap: () {
-                          print("login");
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(top: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.red, // Ganti dengan warna yang sesuai
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(60),
-                            ),
-                          ),
-                          width: double.infinity,
-                          height: tinggi / 5,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                  color: warna.primary,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold), // Warna teks
+                BlocConsumer<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthStateLogin) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Dhasbroad()),
+                      );
+                    } else if (state is AuthStateError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Login Gagal"),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is AuthStateLoading) {
+                      return CircularProgressIndicator();
+                    }
+                    return Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        SlideTransition(
+                          position: _offsetAnimation!,
+                          child: InkWell(
+                            onTap: () {
+                              controller.add(AuthEventLogin(
+                                  email: email.text, password: password.text));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(top: 20),
+                              decoration: BoxDecoration(
+                                color: Colors
+                                    .red, // Ganti dengan warna yang sesuai
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(60),
+                                ),
+                              ),
+                              width: double.infinity,
+                              height: tinggi / 5,
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  "Sign Up",
+                                  style: TextStyle(
+                                      color: warna.primary,
+                                      fontSize: 20,
+                                      fontWeight:
+                                          FontWeight.bold), // Warna teks
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    SlideTransition(
-                      position: _offsetAnimation!,
-                      child: InkWell(
-                        onTap: () {
-                          print("Register");
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                                warna.primary, // Ganti dengan warna yang sesuai
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(60),
-                            ),
-                          ),
-                          width: double.infinity,
-                          height: tinggi / 8.5,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Let’s Get Kicking!",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                        SlideTransition(
+                          position: _offsetAnimation!,
+                          child: InkWell(
+                            onTap: () {
+                              print("Register");
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: warna
+                                    .primary, // Ganti dengan warna yang sesuai
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(60),
+                                ),
+                              ),
+                              width: double.infinity,
+                              height: tinggi / 8.5,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Let’s Get Kicking!",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
