@@ -38,8 +38,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController email = TextEditingController(text: "admin1");
-    TextEditingController password = TextEditingController(text: "admin");
+    TextEditingController email = TextEditingController();
+    TextEditingController password = TextEditingController();
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
     var controller = context.read<AuthBloc>();
@@ -76,8 +76,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: TextField(
+                          controller: email,
                           decoration: InputDecoration(
-                              hintText: "Username",
+                              hintText: "Email",
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               prefixIcon: Icon(Icons.email)),
@@ -86,6 +87,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: TextField(
+                          controller: password,
                           decoration: InputDecoration(
                               hintText: "Password",
                               border: OutlineInputBorder(

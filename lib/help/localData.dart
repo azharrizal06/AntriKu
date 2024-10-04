@@ -8,7 +8,7 @@ class LocalData {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('auth', auth.toJson());
     print("data save");
-    print(auth.toJson());
+    print(auth);
   }
 
 //Get data login

@@ -4,7 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
+import '../../Model/AuthModel.dart';
 import '../../help/help.dart';
+import '../../help/localData.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -19,6 +21,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (resphone.statusCode == 200) {
         var data = jsonDecode(resphone.body);
         print("Data Login : $data");
+        Auth auth = Auth.fromMap(data);
+        await LocalData().SaveDataAuth(auth);
         emit(AuthStateLogin());
       } else {
         emit(AuthStateError());
