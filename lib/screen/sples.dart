@@ -1,6 +1,9 @@
 import 'package:antriku/help/help.dart';
+import 'package:antriku/screen/Dhasbroad.dart';
 import 'package:antriku/screen/login.dart';
 import 'package:flutter/material.dart';
+
+import '../help/localData.dart';
 
 class Sples extends StatefulWidget {
   const Sples({
@@ -17,15 +20,27 @@ class _SplesState extends State<Sples> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(Duration(microseconds: 500), () {
       setState(() {
         _isPositioned = true;
       });
     });
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
+
+    Future.delayed(Duration(seconds: 4), () {
+      nextpage();
     });
+  }
+
+  Future<void> nextpage() async {
+    var isLogin = await LocalData().IsLogin();
+    // bool isLogin = true;
+
+    print("IsLogin: $isLogin");
+    isLogin == true
+        ? Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Dhasbroad()))
+        : Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Login()));
   }
 
   @override

@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+var bashUrl = "http://192.168.200.42:8000";
+
 class warna {
   static Color primary = Color(0xFFFFFFFF);
   static Color secondary = Color(0xFF4584FF);
