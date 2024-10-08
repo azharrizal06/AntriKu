@@ -1,8 +1,8 @@
-import 'package:antriku/screen/sples.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/Auth/auth_bloc.dart';
+import 'screen/sples.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-            // home: Login())
+            // home: Register()));
             home: Sples()));
   }
 }

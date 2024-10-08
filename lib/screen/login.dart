@@ -1,9 +1,12 @@
 import 'package:antriku/help/help.dart';
 import 'package:antriku/screen/Dhasbroad.dart';
+import 'package:antriku/screen/Register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/Auth/auth_bloc.dart';
+import '../widget/TextInput.dart';
+import '../widget/TombolRegister.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -74,27 +77,15 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       SizedBox(
                         height: tinggi / 17,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: TextField(
-                          controller: email,
-                          decoration: InputDecoration(
-                              hintText: "Email",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              prefixIcon: Icon(Icons.email)),
-                        ),
+                      TextInput(
+                        controller: email,
+                        label: "Email",
+                        icons: Icons.email,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: TextField(
-                          controller: password,
-                          decoration: InputDecoration(
-                              hintText: "Password",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              prefixIcon: Icon(Icons.lock)),
-                        ),
+                      TextInput(
+                        controller: password,
+                        label: "Password",
+                        icons: Icons.lock,
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 10),
@@ -104,7 +95,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                             backgroundColor:
                                 WidgetStateProperty.all(warna.primary),
                             foregroundColor:
-                                WidgetStateProperty.all(warna.primary),
+                                WidgetStateProperty.all(warna.secondary),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -218,34 +209,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                             ),
                           ),
                         ),
-                        SlideTransition(
-                          position: _offsetAnimation!,
-                          child: InkWell(
+                        TombolRegister(
                             onTap: () {
-                              print("Register");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Register(),
+                                  ));
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: warna
-                                    .primary, // Ganti dengan warna yang sesuai
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(60),
-                                ),
-                              ),
-                              width: double.infinity,
-                              height: tinggi / 8.5,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Let’s Get Kicking!",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                            lebel: "Let’s Get Kicking!",
+                            offsetAnimation: _offsetAnimation,
+                            tinggi: tinggi,
+                            warna: warna.primary),
                       ],
                     );
                   },
