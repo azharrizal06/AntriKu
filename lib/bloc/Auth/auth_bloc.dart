@@ -12,7 +12,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthStateLogout()) {
+  AuthBloc() : super(AuthStateInitial()) {
     on<AuthEventLogin>((event, emit) async {
       emit(AuthStateLoading());
       var resphone = await http.post(Uri.parse("$bashUrl/api/login"),
@@ -24,13 +24,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         Auth auth = Auth.fromMap(data);
         await LocalData().SaveDataAuth(auth);
         emit(AuthStateLogin());
+      } else if (resphone.statusCode == 401) {
+        var data = jsonDecode(resphone.body);
+        print(data['message']);
+        emit(AuthStateError(message: data['message']));
       } else {
-        emit(AuthStateError());
+        var data = jsonDecode(resphone.body);
+        print(data['message']);
+        emit(AuthStateError(message: data['message']));
       }
     });
 
     on<AuthEventLogout>((event, emit) async {
-      emit(AuthStateLogout());
+      emit(AuthStateLoading());
+      var token;
+      await LocalData().GetDataAuth().then((value) {
+        token = value?.token;
+      });
+      print("Token : $token");
+      var resphone = await http.post(Uri.parse("$bashUrl/api/logout"),
+          headers: {"Authorization": "Bearer $token"});
+      print("statuscode ${resphone.statusCode}");
+      if (resphone.statusCode == 200) {
+        print("berhasil");
+        await LocalData().DeleteDataAuth();
+        emit(AuthStateLogout(token: token));
+      } else {
+        var data = jsonDecode(resphone.body);
+        print(data['message']);
+        print("error LOGOUT");
+        emit(AuthStateError(message: data['message']));
+      }
     });
     on<AuthEventRegister>((event, emit) async {
       emit(AuthStateRegister());

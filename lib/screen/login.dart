@@ -38,8 +38,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
+    TextEditingController email =
+        TextEditingController(text: "azharadmin@gmail.com");
+    TextEditingController password = TextEditingController(text: "12345678");
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
     var controller = context.read<AuthBloc>();
@@ -63,7 +64,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         style: TextStyle(
                           fontSize: 70,
                           fontFamily: "Actonia",
-                          color: warna.Red,
+                          color: warna.red,
                         ),
                       ),
                       Text(
@@ -101,7 +102,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         child: ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(warna.secondary),
+                                WidgetStateProperty.all(warna.primary),
                             foregroundColor:
                                 WidgetStateProperty.all(warna.primary),
                             shape: MaterialStateProperty.all(
@@ -134,7 +135,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                           style: ButtonStyle(
                             backgroundColor:
                                 WidgetStateProperty.all(warna.primary),
-                            foregroundColor: WidgetStateProperty.all(warna.Red),
+                            foregroundColor: WidgetStateProperty.all(warna.red),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -173,7 +174,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     } else if (state is AuthStateError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Login Gagal"),
+                          content: Text(state.message),
                         ),
                       );
                     }
