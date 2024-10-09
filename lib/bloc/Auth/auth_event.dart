@@ -16,4 +16,14 @@ final class AuthEventLogin extends AuthEvent {
 final class AuthEventLogout extends AuthEvent {}
 
 //aksi register
-final class AuthEventRegister extends AuthEvent {}
+final class AuthEventRegister extends AuthEvent {
+  final String name;
+  final String email;
+  final String password;
+  final String role;
+  AuthEventRegister(
+      {required this.name,
+      required this.email,
+      required this.password,
+      required this.role});
+}

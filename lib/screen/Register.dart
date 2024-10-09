@@ -1,5 +1,8 @@
+import 'package:antriku/screen/Dhasbroad.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/Auth/auth_bloc.dart';
 import '../help/help.dart';
 import '../widget/TextInput.dart';
 import '../widget/TombolRegister.dart';
@@ -39,9 +42,9 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
     TextEditingController email =
-        TextEditingController(text: "regis@gmail.com");
-    TextEditingController password =
-        TextEditingController(text: "regis@gmail.com");
+        TextEditingController(text: "Azregis@gmail.comhar");
+    TextEditingController password = TextEditingController(text: "12345678");
+    TextEditingController nama = TextEditingController(text: "Azhar");
     return Scaffold(
       backgroundColor: warna.primary,
       body: SafeArea(
@@ -69,6 +72,7 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
               SizedBox(
                 height: tinggi / 17,
               ),
+              TextInput(controller: nama, label: "nama,", icons: Icons.person),
               TextInput(
                 controller: email,
                 label: "Email",
@@ -103,14 +107,30 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
           ),
         ),
       ),
-      bottomNavigationBar: TombolRegister(
-        offsetAnimation: _offsetAnimation,
-        tinggi: tinggi,
-        warna: warna.red,
-        onTap: () {
-          print("Daftar sebagai ${selectedRole.value}");
+      bottomNavigationBar: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthStateLogin) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Dhasbroad()),
+                (route) => false);
+          }
         },
-        lebel: "Daftar & Login",
+        builder: (context, state) {
+          return TombolRegister(
+            offsetAnimation: _offsetAnimation,
+            tinggi: tinggi,
+            warna: warna.red,
+            onTap: () {
+              context.read<AuthBloc>().add(AuthEventRegister(
+                  email: email.text,
+                  name: nama.text,
+                  password: password.text,
+                  role: selectedRole.value!));
+            },
+            lebel: "Daftar & Login",
+          );
+        },
       ),
     );
   }

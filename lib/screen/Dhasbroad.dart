@@ -1,3 +1,4 @@
+import 'package:antriku/help/help.dart';
 import 'package:antriku/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,9 @@ class _DhasbroadState extends State<Dhasbroad> {
   Widget build(BuildContext context) {
     var controller = context.read<AuthBloc>();
     return Scaffold(
+      backgroundColor: warna.primary,
       appBar: AppBar(
+        backgroundColor: warna.primary,
         title: Text("Dhasbroad"),
         actions: [
           BlocConsumer<AuthBloc, AuthState>(
