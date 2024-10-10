@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/AntrainBloc/atrian_bloc_bloc.dart';
 import 'bloc/Auth/auth_bloc.dart';
 import 'screen/sples.dart';
 
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthBloc(),
+          ),
+          BlocProvider(
+            create: (context) => AtrianBlocBloc(),
           )
         ],
         child: MaterialApp(

@@ -12,6 +12,7 @@ class pengunjung extends StatelessWidget {
     return Scaffold(
       backgroundColor: warna.primary,
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: LayoutBuilder(

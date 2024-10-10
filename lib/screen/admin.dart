@@ -1,8 +1,21 @@
 import 'package:antriku/help/help.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Admin extends StatelessWidget {
+import '../bloc/AntrainBloc/atrian_bloc_bloc.dart';
+
+class Admin extends StatefulWidget {
   const Admin({super.key});
+
+  @override
+  State<Admin> createState() => _AdminState();
+}
+
+class _AdminState extends State<Admin> {
+  void initState() {
+    super.initState();
+    context.read<AtrianBlocBloc>().add(AtrianEventBlocGetlist());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +31,6 @@ class Admin extends StatelessWidget {
                 double containerWidth = MediaQuery.of(context).size.width;
                 return Container(
                     padding: EdgeInsets.only(bottom: 50),
-                    // color: Colors.red,
                     height: containerHeight,
                     width: containerWidth,
                     child: Stack(
@@ -27,7 +39,6 @@ class Admin extends StatelessWidget {
                         Image.asset("assets/images/papan.png"),
                         Container(
                           margin: EdgeInsets.only(top: 120),
-                          // color: Colors.amber,
                           height: containerHeight / 2,
                           width: containerWidth / 2,
                           child: const Column(
@@ -52,15 +63,83 @@ class Admin extends StatelessWidget {
               },
             ),
           ),
-          Expanded(
-              child: ListView.builder(
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text("Item $index"),
-              );
+          BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
+            listener: (context, state) {
+              if (state is AtrianstateBlocStateFailed) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Gagal"),
+                    content: Text(state.message.toString()),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("OK"))
+                    ],
+                  ),
+                );
+              }
             },
-          ))
+            builder: (context, state) {
+              if (state is AtrianstateBlocStateListantrian) {
+                return Expanded(
+                    child: ListView.builder(
+                  itemCount: state.listantrian?.length,
+                  itemBuilder: (context, index) {
+                    var data = state.listantrian?[index];
+                    return Container(
+                      margin: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            width: 2,
+                            color: warna.red,
+                          ),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Antrian ${data?.nomor.toString()}",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              Text(
+                                data!.nama.toString(),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          ElevatedButton(
+                              onPressed: () {
+                                context.read<AtrianBlocBloc>().add(
+                                      AtrianEventBlocStatus(
+                                          id: data.id.toString()),
+                                    );
+                              },
+                              child: Text("Panggil"))
+                        ],
+                      ),
+                    );
+                  },
+                ));
+              } else if (state is AtrianstateBlocLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return Container();
+              }
+            },
+          )
         ],
       ),
     );

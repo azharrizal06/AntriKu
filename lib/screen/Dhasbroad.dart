@@ -54,44 +54,45 @@ class _DhasbroadState extends State<Dhasbroad> with TickerProviderStateMixin {
     var lebar = MediaQuery.of(context).size.width;
     var controller = context.read<AuthBloc>();
     return Scaffold(
-      backgroundColor: warna.primary,
-      appBar: AppBar(
-        backgroundColor: warna.red,
-        title: Text(
-          "Dhasbroad",
-          style: TextStyle(color: warna.primary),
+        backgroundColor: warna.primary,
+        appBar: AppBar(
+          backgroundColor: warna.red,
+          title: Text(
+            "Dhasbroad",
+            style: TextStyle(color: warna.primary),
+          ),
+          actions: [
+            BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthStateLogout) {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                }
+              },
+              builder: (context, state) {
+                return IconButton(
+                    onPressed: () {
+                      controller.add(AuthEventLogout());
+                    },
+                    icon: Icon(
+                      Icons.logout,
+                      color: warna.primary,
+                    ));
+              },
+            )
+          ],
         ),
-        actions: [
-          BlocConsumer<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthStateLogout) {
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              }
-            },
-            builder: (context, state) {
-              return IconButton(
-                  onPressed: () {
-                    controller.add(AuthEventLogout());
-                  },
-                  icon: Icon(
-                    Icons.logout,
-                    color: warna.primary,
-                  ));
-            },
-          )
-        ],
-      ),
-      body: role?.user?.role == "user" ? pengunjung() : Admin(),
-      bottomNavigationBar: TombolRegister(
-        offsetAnimation: _offsetAnimation,
-        tinggi: tinggi,
-        warna: warna.red,
-        onTap: () {
-          print("ceated");
-        },
-        lebel: "Create Antrian",
-      ),
-    );
+        body: role?.user?.role == "user" ? pengunjung() : Admin(),
+        bottomNavigationBar: role?.user?.role == "user"
+            ? TombolRegister(
+                offsetAnimation: _offsetAnimation,
+                tinggi: tinggi,
+                warna: warna.red,
+                onTap: () {
+                  print("ceated");
+                },
+                lebel: "Create Antrian",
+              )
+            : null);
   }
 }
