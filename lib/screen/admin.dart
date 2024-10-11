@@ -12,9 +12,11 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
+  @override
   void initState() {
     super.initState();
     context.read<AtrianBlocBloc>().add(AtrianEventBlocGetlist());
+    // context.read<AtrianBlocBloc>().add(AtrianEventBlocPending());
   }
 
   @override
@@ -25,153 +27,170 @@ class _AdminState extends State<Admin> {
         children: [
           BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
             listener: (context, state) {
-              // TODO: implement listener
+              if (state is AtrianstateBlocStateFailed) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+              }
             },
             builder: (context, state) {
               if (state is AtrianstateBlocLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is AtrianstateBlocStateFailed) {
-                return Center(
-                  child: Text(state.message),
-                );
+                return Center(child: CircularProgressIndicator());
               } else if (state is AtrianstateBlocStateListantrian) {
-                return Center(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      double containerHeight =
-                          MediaQuery.of(context).size.height / 2.5;
-                      double containerWidth = MediaQuery.of(context).size.width;
-                      return Container(
-                          padding: EdgeInsets.only(bottom: 50),
-                          height: containerHeight,
-                          width: containerWidth,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset("assets/images/papan.png"),
-                              Container(
-                                margin: EdgeInsets.only(top: 120),
-                                height: containerHeight / 2,
-                                width: containerWidth / 2,
-                                child: Column(
-                                  children: [
-                                    FittedBox(
-                                      fit: BoxFit
-                                          .scaleDown, // Menyesuaikan teks agar tetap di dalam area yang tersedia
-                                      child: Text(
-                                        "No. ${state.antrian?.nomor ?? "kosong"}",
-                                        style: TextStyle(
-                                            fontSize: 40,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Text(
-                                      "Nama : ${state.antrian?.nama ?? "kosong"}",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ));
-                    },
-                  ),
-                );
+                return buildAntrianContainer(state);
               } else {
-                return Center(
-                  child: Text("No Data"),
-                );
+                return Center(child: Text("No Data"));
               }
             },
           ),
-          BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
-            listener: (context, state) {
-              if (state is AtrianstateBlocStateFailed) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("Gagal"),
-                    content: Text(state.message.toString()),
-                    actions: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("OK"))
+          Expanded(
+            child: DefaultTabController(
+              length: 3,
+              child: Column(
+                children: [
+                  TabBar(
+                    tabs: [
+                      Tab(text: "Antrian"),
+                      Tab(text: "Pending"),
+                      Tab(text: "Selesai"),
                     ],
                   ),
-                );
-              }
-            },
-            builder: (context, state) {
-              if (state is AtrianstateBlocStateListantrian) {
-                return Expanded(
-                    child: ListView.builder(
-                  itemCount: state.listantrian?.length,
-                  itemBuilder: (context, index) {
-                    print("jumlah = ${state.listantrian?.length}");
-                    var data = state.listantrian![index];
-                    return Container(
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            width: 2,
-                            color: warna.red,
-                          ),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Antrian ${data?.nomor.toString()}",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              Text(
-                                data!.nama.toString(),
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                context.read<AtrianBlocBloc>().add(
-                                      AtrianEventBlocStatus(
-                                          id: data.id.toString()),
-                                    );
-                              },
-                              child: Text("Panggil"))
-                        ],
-                      ),
-                    );
-                  },
-                ));
-              } else if (state is AtrianstateBlocLoading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                return Container(
-                  child: Center(child: Text("No Data")),
-                );
-              }
-            },
-          )
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        buildAntrianListView(),
+                        buildPendingListView(),
+                        Container(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget buildAntrianContainer(AtrianstateBlocStateListantrian state) {
+    return Center(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double containerHeight = MediaQuery.of(context).size.height / 2.5;
+          double containerWidth = MediaQuery.of(context).size.width;
+
+          return Container(
+            padding: EdgeInsets.only(bottom: 50),
+            height: containerHeight,
+            width: containerWidth,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset("assets/images/papan.png"),
+                Container(
+                  margin: EdgeInsets.only(top: 120),
+                  height: containerHeight / 2,
+                  width: containerWidth / 2,
+                  child: Column(
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "No. ${state.antrian?.nomor ?? "kosong"}",
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Nama : ${state.antrian?.nama ?? "kosong"}",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildAntrianListView() {
+    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is AtrianstateBlocStateListantrian) {
+          return ListView.builder(
+            itemCount: state.listantrian?.length ?? 0,
+            itemBuilder: (context, index) {
+              var data = state.listantrian![index];
+              return buildAntrianItem(data);
+            },
+          );
+        } else if (state is AtrianstateBlocLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return Center(child: Text("No Data"));
+        }
+      },
+    );
+  }
+
+  Widget buildAntrianItem(data) {
+    return ListTile(
+      title: Text("Antrian: ${data.nomor}"),
+      subtitle: Text("Nama: ${data.nama}"),
+      trailing: ElevatedButton(
+        onPressed: () {
+          context
+              .read<AtrianBlocBloc>()
+              .add(AtrianEventBlocStatus(id: data.id));
+        },
+        child: Text("Panggil"),
+      ),
+    );
+  }
+
+  Widget buildPendingListView() {
+    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is AtrianstateBlocStateListantrian) {
+          print(state.pendingdata?.length);
+
+          return ListView.builder(
+            itemCount: state.pendingdata?.length ?? 0,
+            itemBuilder: (context, index) {
+              var data = state.pendingdata![index];
+              return ListTile(
+                title: Text("Antrian: ${data.nomor}"),
+                subtitle: Text("Nama: ${data.nama}"),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<AtrianBlocBloc>()
+                        .add(AtrianEventBlocStatus(id: data.id.toString()));
+                  },
+                  child: Text("Panggil"),
+                ),
+              );
+            },
+          );
+        } else if (state is AtrianstateBlocLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return Center(child: Text("No Pending Data"));
+        }
+      },
     );
   }
 }

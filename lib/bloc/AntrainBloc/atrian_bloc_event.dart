@@ -7,6 +7,8 @@ class AtrianEventBlocInitial extends AtrianBlocEvent {}
 
 class AtrianEventBlocLoading extends AtrianBlocEvent {}
 
+class AtrianEventBlocPending extends AtrianBlocEvent {}
+
 class AtrianEventBlocGetlist extends AtrianBlocEvent {
   String? status;
 

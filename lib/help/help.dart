@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-var bashUrl = "http://192.168.200.7:8000";
+var bashUrl = "http://192.168.11.143:8000";
 var warna = Warna.defaultColors();
 
 class Warna {

@@ -1,37 +1,39 @@
 import 'dart:convert';
 
-class AntrianSekarang {
+class Pendingmodel {
   final String? status;
   final String? message;
-  final DataAntrianSekarang? antrian;
+  final List<Datapending>? data;
 
-  AntrianSekarang({
+  Pendingmodel({
     this.status,
     this.message,
-    this.antrian,
+    this.data,
   });
 
-  factory AntrianSekarang.fromJson(String str) =>
-      AntrianSekarang.fromMap(json.decode(str));
+  factory Pendingmodel.fromJson(String str) =>
+      Pendingmodel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory AntrianSekarang.fromMap(Map<String, dynamic> json) => AntrianSekarang(
+  factory Pendingmodel.fromMap(Map<String, dynamic> json) => Pendingmodel(
         status: json["status"],
         message: json["message"],
-        antrian: json["data"] == null
-            ? null
-            : DataAntrianSekarang.fromMap(json["data"]),
+        data: json["data"] == null
+            ? []
+            : List<Datapending>.from(
+                json["data"]!.map((x) => Datapending.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "status": status,
         "message": message,
-        "data": antrian?.toMap(),
+        "data":
+            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
-class DataAntrianSekarang {
+class Datapending {
   final int? id;
   final int? userId;
   final String? nama;
@@ -40,7 +42,7 @@ class DataAntrianSekarang {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  DataAntrianSekarang({
+  Datapending({
     this.id,
     this.userId,
     this.nama,
@@ -50,13 +52,12 @@ class DataAntrianSekarang {
     this.updatedAt,
   });
 
-  factory DataAntrianSekarang.fromJson(String str) =>
-      DataAntrianSekarang.fromMap(json.decode(str));
+  factory Datapending.fromJson(String str) =>
+      Datapending.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory DataAntrianSekarang.fromMap(Map<String, dynamic> json) =>
-      DataAntrianSekarang(
+  factory Datapending.fromMap(Map<String, dynamic> json) => Datapending(
         id: json["id"],
         userId: json["user_id"],
         nama: json["nama"],
