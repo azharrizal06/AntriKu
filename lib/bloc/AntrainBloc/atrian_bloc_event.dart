@@ -9,7 +9,7 @@ class AtrianEventBlocLoading extends AtrianBlocEvent {}
 
 class AtrianEventBlocGetlist extends AtrianBlocEvent {}
 
-class AtrianEventBlocGetAntrianNow extends AtrianBlocEvent {}
+class AtrianEventBlocStateantrinext extends AtrianBlocEvent {}
 
 class AtrianEventBlocStatus extends AtrianBlocEvent {
   final String id;

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../Model/AuthModel.dart';
+import '../bloc/AntrainBloc/atrian_bloc_bloc.dart';
 import '../bloc/Auth/auth_bloc.dart';
 import '../screen/user.dart';
 import '../widget/TombolRegister.dart';
@@ -93,6 +94,30 @@ class _DhasbroadState extends State<Dhasbroad> with TickerProviderStateMixin {
                 },
                 lebel: "Create Antrian",
               )
-            : null);
+            : Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  TombolRegister(
+                    offsetAnimation: _offsetAnimation,
+                    tinggi: tinggi / 8,
+                    warna: warna.red,
+                    onTap: () {
+                      context
+                          .read<AtrianBlocBloc>()
+                          .add(AtrianEventBlocStateantrinext());
+                    },
+                    lebel: "Antrian Selanjutnya",
+                  ),
+                  TombolRegister(
+                    offsetAnimation: _offsetAnimation,
+                    tinggi: tinggi / 16,
+                    warna: warna.primary,
+                    onTap: () {
+                      print("ceated");
+                    },
+                    lebel: "Pending Antrian",
+                  ),
+                ],
+              ));
   }
 }

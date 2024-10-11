@@ -82,5 +82,29 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
         }
       });
     });
+
+    on<AtrianEventBlocStateantrinext>((event, emit) async {
+      emit(AtrianstateBlocLoading());
+      var token;
+
+      await LocalData().GetDataAuth().then((value) {
+        token = value?.token;
+      });
+
+      // Fetch list antrian
+      final respon =
+          await http.patch(Uri.parse("$bashUrl/api/antrian/selesai"), headers: {
+        'Authorization': 'Bearer ${token}',
+        'accept': 'application/json',
+      });
+      print("respon next antrian${respon.statusCode}");
+      if (respon.statusCode == 200) {
+        add(AtrianEventBlocGetlist());
+        print("berhasila");
+      } else {
+        emit(AtrianstateBlocStateFailed(
+            message: "Gagal mengambil data antrian"));
+      }
+    });
   }
 }

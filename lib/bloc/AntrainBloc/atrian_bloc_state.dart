@@ -24,9 +24,9 @@ final class AtrianstateBlocStateListantrian extends AtrianBlocState {
   });
 }
 
-final class AtrianstateBlocStateantrinow extends AtrianBlocState {
+final class AtrianstateBlocStateantrinext extends AtrianBlocState {
   final DataAntrianSekarang? antrian;
-  AtrianstateBlocStateantrinow({
+  AtrianstateBlocStateantrinext({
     this.antrian,
   });
 }

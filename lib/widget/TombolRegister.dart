@@ -33,9 +33,10 @@ class TombolRegister extends StatelessWidget {
             ),
           ),
           width: double.infinity,
-          height: tinggi / 8.5,
+          height: tinggi,
+          padding: EdgeInsets.only(top: 20),
           child: Align(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             child: Text(
               "$lebel",
               style: TextStyle(
