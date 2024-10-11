@@ -22,13 +22,22 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
       await LocalData().GetDataAuth().then((value) {
         token = value?.token;
       });
-
+      print(event.status);
       // Fetch list antrian
       final listAntrianResponse =
-          await http.get(Uri.parse("$bashUrl/api/antrian"), headers: {
-        'Authorization': 'Bearer ${token}',
-        'Content-Type': 'application/json',
-      });
+          await http.post(Uri.parse("$bashUrl/api/antrian"),
+              headers: {
+                'Authorization': 'Bearer ${token}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: json.encode({
+                "status": event.status == "null" ||
+                        event.status == '' ||
+                        event.status == null
+                    ? "waiting"
+                    : event.status
+              }));
 
       // Fetch antrian saat ini
       final antrianNowResponse =
@@ -41,14 +50,14 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
           antrianNowResponse.statusCode == 200) {
         var listAntrianJson = json.decode(listAntrianResponse.body);
         var antrianNowJson = json.decode(antrianNowResponse.body);
-
+        print(listAntrianJson);
         AwaitingAntrian listAntrianData =
             AwaitingAntrian.fromMap(listAntrianJson);
         AntrianSekarang antrianNowData =
             AntrianSekarang.fromMap(antrianNowJson);
 
         emit(AtrianstateBlocStateListantrian(
-          listantrian: listAntrianData.data ?? [],
+          listantrian: listAntrianData.data,
           antrian: antrianNowData.antrian,
         ));
       } else {
@@ -99,8 +108,8 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
       });
       print("respon next antrian${respon.statusCode}");
       if (respon.statusCode == 200) {
-        add(AtrianEventBlocGetlist());
         print("berhasila");
+        add(AtrianEventBlocGetlist());
       } else {
         emit(AtrianstateBlocStateFailed(
             message: "Gagal mengambil data antrian"));

@@ -115,7 +115,8 @@ class _AdminState extends State<Admin> {
                     child: ListView.builder(
                   itemCount: state.listantrian?.length,
                   itemBuilder: (context, index) {
-                    var data = state.listantrian?[index];
+                    print("jumlah = ${state.listantrian?.length}");
+                    var data = state.listantrian![index];
                     return Container(
                       margin: EdgeInsets.all(10),
                       padding: EdgeInsets.all(10),
@@ -163,7 +164,9 @@ class _AdminState extends State<Admin> {
                   child: CircularProgressIndicator(),
                 );
               } else {
-                return Container();
+                return Container(
+                  child: Center(child: Text("No Data")),
+                );
               }
             },
           )
@@ -172,5 +175,3 @@ class _AdminState extends State<Admin> {
     );
   }
 }
-
-class AntrainBlocBloc {}

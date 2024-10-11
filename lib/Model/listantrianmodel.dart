@@ -2,12 +2,12 @@ import 'dart:convert';
 
 class AwaitingAntrian {
   final String? status;
-  final String? mwssage;
+  final String? message;
   final List<Antrian>? data;
 
   AwaitingAntrian({
     this.status,
-    this.mwssage,
+    this.message,
     this.data,
   });
 
@@ -18,16 +18,16 @@ class AwaitingAntrian {
 
   factory AwaitingAntrian.fromMap(Map<String, dynamic> json) => AwaitingAntrian(
         status: json["status"],
-        mwssage: json["mwssage"],
-        data: json["Data"] == null
+        message: json["message"],
+        data: json["data"] == null
             ? []
-            : List<Antrian>.from(json["Data"]!.map((x) => Antrian.fromMap(x))),
+            : List<Antrian>.from(json["data"]!.map((x) => Antrian.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "status": status,
-        "mwssage": mwssage,
-        "Data":
+        "message": message,
+        "data":
             data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
