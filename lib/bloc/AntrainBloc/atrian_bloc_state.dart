@@ -16,8 +16,10 @@ final class AtrianstateBlocStateFailed extends AtrianBlocState {
 
 final class AtrianstateBlocStateListantrian extends AtrianBlocState {
   final List<Antrian>? listantrian;
+  final DataAntrianSekarang? antrian;
   // final AntrainNow;
   AtrianstateBlocStateListantrian({
+    this.antrian,
     this.listantrian,
   });
 }

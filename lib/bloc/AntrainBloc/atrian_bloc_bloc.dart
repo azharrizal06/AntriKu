@@ -17,29 +17,46 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
     //get list antrian admin
     on<AtrianEventBlocGetlist>((event, emit) async {
       emit(AtrianstateBlocLoading());
+
       var token;
       await LocalData().GetDataAuth().then((value) {
         token = value?.token;
       });
-      await http.get(Uri.parse("$bashUrl/api/antrian"), headers: {
+
+      // Fetch list antrian
+      final listAntrianResponse =
+          await http.get(Uri.parse("$bashUrl/api/antrian"), headers: {
         'Authorization': 'Bearer ${token}',
         'Content-Type': 'application/json',
-      }).then((value) {
-        print("status code list antrian ${value.statusCode}");
-        var response = json.decode(value.body);
-
-        if (value.statusCode == 200) {
-          print(token);
-          AwaitingAntrian antrianData = AwaitingAntrian.fromMap(response);
-
-          emit(AtrianstateBlocStateListantrian(
-              listantrian: antrianData.data ?? []));
-        } else {
-          emit(AtrianstateBlocStateFailed(message: response['message']));
-        }
       });
+
+      // Fetch antrian saat ini
+      final antrianNowResponse =
+          await http.get(Uri.parse("$bashUrl/api/antrian/saatini"), headers: {
+        'Authorization': 'Bearer ${token}',
+        'Content-Type': 'application/json',
+      });
+
+      if (listAntrianResponse.statusCode == 200 &&
+          antrianNowResponse.statusCode == 200) {
+        var listAntrianJson = json.decode(listAntrianResponse.body);
+        var antrianNowJson = json.decode(antrianNowResponse.body);
+
+        AwaitingAntrian listAntrianData =
+            AwaitingAntrian.fromMap(listAntrianJson);
+        AntrianSekarang antrianNowData =
+            AntrianSekarang.fromMap(antrianNowJson);
+
+        emit(AtrianstateBlocStateListantrian(
+          listantrian: listAntrianData.data ?? [],
+          antrian: antrianNowData.antrian,
+        ));
+      } else {
+        emit(AtrianstateBlocStateFailed(
+            message: "Gagal mengambil data antrian atau antrian saat ini"));
+      }
     });
-    //ongoing
+    //ubah status menjadiongoing
     on<AtrianEventBlocStatus>((event, emit) async {
       emit(AtrianstateBlocLoading());
       var token;
@@ -57,10 +74,8 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
 
         if (value.statusCode == 200) {
           print(token);
-          AntrianSekarang antrianData = AntrianSekarang.fromMap(response);
 
           add(AtrianEventBlocGetlist());
-          emit(AtrianstateBlocStateantrinow(antrian: antrianData.antrian));
         } else {
           add(AtrianEventBlocGetlist());
           emit(AtrianstateBlocStateFailed(message: response['message']));

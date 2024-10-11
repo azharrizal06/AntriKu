@@ -23,45 +23,72 @@ class _AdminState extends State<Admin> {
       backgroundColor: warna.primary,
       body: Column(
         children: [
-          Center(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                double containerHeight =
-                    MediaQuery.of(context).size.height / 2.5;
-                double containerWidth = MediaQuery.of(context).size.width;
-                return Container(
-                    padding: EdgeInsets.only(bottom: 50),
-                    height: containerHeight,
-                    width: containerWidth,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset("assets/images/papan.png"),
-                        Container(
-                          margin: EdgeInsets.only(top: 120),
-                          height: containerHeight / 2,
-                          width: containerWidth / 2,
-                          child: const Column(
+          BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              if (state is AtrianstateBlocLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is AtrianstateBlocStateFailed) {
+                return Center(
+                  child: Text(state.message),
+                );
+              } else if (state is AtrianstateBlocStateListantrian) {
+                return Center(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      double containerHeight =
+                          MediaQuery.of(context).size.height / 2.5;
+                      double containerWidth = MediaQuery.of(context).size.width;
+                      return Container(
+                          padding: EdgeInsets.only(bottom: 50),
+                          height: containerHeight,
+                          width: containerWidth,
+                          child: Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Text(
-                                "No. 1220",
-                                style: TextStyle(
-                                    fontSize: 40, fontWeight: FontWeight.bold),
+                              Image.asset("assets/images/papan.png"),
+                              Container(
+                                margin: EdgeInsets.only(top: 120),
+                                height: containerHeight / 2,
+                                width: containerWidth / 2,
+                                child: Column(
+                                  children: [
+                                    FittedBox(
+                                      fit: BoxFit
+                                          .scaleDown, // Menyesuaikan teks agar tetap di dalam area yang tersedia
+                                      child: Text(
+                                        "No. ${state.antrian?.nomor ?? "kosong"}",
+                                        style: TextStyle(
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Text(
+                                      "Nama : ${state.antrian?.nama ?? "kosong"}",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
                               ),
-                              Text(
-                                "Nama : sdffE",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              )
                             ],
-                          ),
-                        ),
-                      ],
-                    ));
-              },
-            ),
+                          ));
+                    },
+                  ),
+                );
+              } else {
+                return Center(
+                  child: Text("No Data"),
+                );
+              }
+            },
           ),
           BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
             listener: (context, state) {
@@ -145,3 +172,5 @@ class _AdminState extends State<Admin> {
     );
   }
 }
+
+class AntrainBlocBloc {}

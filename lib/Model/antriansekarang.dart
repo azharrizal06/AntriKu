@@ -19,15 +19,15 @@ class AntrianSekarang {
   factory AntrianSekarang.fromMap(Map<String, dynamic> json) => AntrianSekarang(
         status: json["status"],
         message: json["message"],
-        antrian: json["antrian"] == null
+        antrian: json["Data"] == null
             ? null
-            : DataAntrianSekarang.fromMap(json["antrian"]),
+            : DataAntrianSekarang.fromMap(json["Data"]),
       );
 
   Map<String, dynamic> toMap() => {
         "status": status,
         "message": message,
-        "antrian": antrian?.toMap(),
+        "Data": antrian?.toMap(),
       };
 }
 
