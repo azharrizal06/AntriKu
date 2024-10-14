@@ -41,11 +41,13 @@ class _DhasbroadState extends State<Dhasbroad> with TickerProviderStateMixin {
     // Start the animation
     _controller?.forward();
 
-    LocalData().GetDataAuth().then((value) {
-      if (value != null) {
-        role = value;
-        print("ini role ${role?.user?.role}");
-      }
+    getRole();
+  }
+
+  Future getRole() async {
+    var value = await LocalData().GetDataAuth();
+    setState(() {
+      role = value;
     });
   }
 
@@ -87,7 +89,7 @@ class _DhasbroadState extends State<Dhasbroad> with TickerProviderStateMixin {
         bottomNavigationBar: role?.user?.role == "user"
             ? TombolRegister(
                 offsetAnimation: _offsetAnimation,
-                tinggi: tinggi,
+                tinggi: tinggi / 8,
                 warna: warna.red,
                 onTap: () {
                   print("ceated");
