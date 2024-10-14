@@ -24,11 +24,13 @@ final class AtrianstateBlocStateListantrian extends AtrianBlocState {
   final List<Antrian>? listantrian;
   final DataAntrianSekarang? antrian;
   List<Datapending>? pendingdata;
+  List<Datapending>? selesai;
   // final AntrainNow;
   AtrianstateBlocStateListantrian({
     this.antrian,
     this.listantrian,
     this.pendingdata,
+    this.selesai,
   });
 }
 

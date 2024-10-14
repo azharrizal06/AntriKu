@@ -41,9 +41,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController email =
-        TextEditingController(text: "azharadmin@gmail.com");
-    TextEditingController password = TextEditingController(text: "12345678");
+    TextEditingController email = TextEditingController();
+    TextEditingController password = TextEditingController();
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
     var controller = context.read<AuthBloc>();
@@ -198,7 +197,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: Text(
-                                  "Sign Up",
+                                  "Login",
                                   style: TextStyle(
                                       color: warna.primary,
                                       fontSize: 20,
@@ -217,9 +216,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                     builder: (context) => Register(),
                                   ));
                             },
-                            lebel: "Let’s Get Kicking!",
+                            lebel: "Daftar",
                             offsetAnimation: _offsetAnimation,
-                            tinggi: tinggi,
+                            tinggi: tinggi / 9,
                             warna: warna.primary),
                       ],
                     );

@@ -60,7 +60,7 @@ class _AdminState extends State<Admin> {
                       children: [
                         buildAntrianListView(),
                         buildPendingListView(),
-                        Container(),
+                        buildselesaiListView()
                       ],
                     ),
                   ),
@@ -181,6 +181,36 @@ class _AdminState extends State<Admin> {
                         .add(AtrianEventBlocStatus(id: data.id.toString()));
                   },
                   child: Text("Panggil"),
+                ),
+              );
+            },
+          );
+        } else if (state is AtrianstateBlocLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return Center(child: Text("No Pending Data"));
+        }
+      },
+    );
+  }
+
+  Widget buildselesaiListView() {
+    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is AtrianstateBlocStateListantrian) {
+          print(state.selesai?.length);
+
+          return ListView.builder(
+            itemCount: state.selesai?.length ?? 0,
+            itemBuilder: (context, index) {
+              var data = state.selesai![index];
+              return ListTile(
+                title: Text("Antrian: ${data.nomor}"),
+                subtitle: Text("Nama: ${data.nama}"),
+                trailing: ElevatedButton(
+                  onPressed: () {},
+                  child: Text("Selesai"),
                 ),
               );
             },

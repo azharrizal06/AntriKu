@@ -41,10 +41,9 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
     ValueNotifier<String?> selectedRole = ValueNotifier<String?>("user");
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
-    TextEditingController email =
-        TextEditingController(text: "Azregis@gmail.comhar");
-    TextEditingController password = TextEditingController(text: "12345678");
-    TextEditingController nama = TextEditingController(text: "Azhar");
+    TextEditingController email = TextEditingController();
+    TextEditingController password = TextEditingController();
+    TextEditingController nama = TextEditingController();
     return Scaffold(
       backgroundColor: warna.primary,
       body: SafeArea(
@@ -119,7 +118,7 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
         builder: (context, state) {
           return TombolRegister(
             offsetAnimation: _offsetAnimation,
-            tinggi: tinggi,
+            tinggi: tinggi / 9,
             warna: warna.red,
             onTap: () {
               context.read<AuthBloc>().add(AuthEventRegister(

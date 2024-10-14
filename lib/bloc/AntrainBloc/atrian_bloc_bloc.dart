@@ -66,14 +66,25 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
         },
         body: {"status": "pending"},
       );
+      final responseselesai = await http.post(
+        Uri.parse("$bashUrl/api/antrian"),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+        body: {"status": "completed"},
+      );
 
       if (listAntrianResponse.statusCode == 200 &&
           antrianNowResponse.statusCode == 200 &&
-          response.statusCode == 200) {
+          response.statusCode == 200 &&
+          responseselesai.statusCode == 200) {
         var listAntrianJson = json.decode(listAntrianResponse.body);
         var antrianNowJson = json.decode(antrianNowResponse.body);
         var pendingBody = json.decode(response.body);
+        var selesaipendingBody = json.decode(responseselesai.body);
         Pendingmodel responPending = Pendingmodel.fromMap(pendingBody);
+        Pendingmodel selesai = Pendingmodel.fromMap(selesaipendingBody);
 
         AwaitingAntrian listAntrianData =
             AwaitingAntrian.fromMap(listAntrianJson);
@@ -84,6 +95,7 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
           listantrian: listAntrianData.data,
           antrian: antrianNowData.antrian,
           pendingdata: responPending.data,
+          selesai: selesai.data,
         ));
       } else {
         emit(AtrianstateBlocStateFailed(
