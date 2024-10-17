@@ -190,6 +190,12 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
     }
   }
 
+  //get antri user now
+  // api /api/antrian/11/user
+
+  //get anytris ekarang
+  // /api/antrian/saatini
+
   Future<String> _getToken() async {
     var token;
     await LocalData().GetDataAuth().then((value) {

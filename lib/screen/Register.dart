@@ -15,6 +15,9 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> with TickerProviderStateMixin {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController nama = TextEditingController();
   AnimationController? _controller;
   Animation<Offset>? _offsetAnimation;
   void initState() {
@@ -41,69 +44,72 @@ class _RegisterState extends State<Register> with TickerProviderStateMixin {
     ValueNotifier<String?> selectedRole = ValueNotifier<String?>("user");
     var tinggi = MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
-    TextEditingController nama = TextEditingController();
+
     return Scaffold(
       backgroundColor: warna.primary,
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          width: lebar,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: tinggi / 7,
-              ),
-              Text(
-                "Register",
-                style: TextStyle(
-                  fontSize: 70,
-                  fontFamily: "Actonia",
-                  color: warna.red,
-                ),
-              ),
-              Text(
-                "Welcome back, get back to exploring our amazing kicks.",
-                style: TextStyle(color: warna.grey),
-              ),
-              SizedBox(
-                height: tinggi / 17,
-              ),
-              TextInput(controller: nama, label: "nama,", icons: Icons.person),
-              TextInput(
-                controller: email,
-                label: "Email",
-                icons: Icons.email,
-              ),
-              TextInput(
-                controller: password,
-                icons: Icons.lock,
-                label: "Password",
-              ),
-              ValueListenableBuilder<String?>(
-                valueListenable: selectedRole,
-                builder: (context, value, child) {
-                  return DropdownMenu(
-                    inputDecorationTheme: InputDecorationTheme(
-                        border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    )),
-                    width: lebar / 1.5,
-                    dropdownMenuEntries: const [
-                      DropdownMenuEntry(label: "Admin", value: "admin"),
-                      DropdownMenuEntry(label: "User", value: "user"),
-                    ],
-                    onSelected: (String? selectedValue) {
-                      selectedRole.value = selectedValue;
+        child: ListView(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              width: lebar,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: tinggi / 7,
+                  ),
+                  Text(
+                    "Register",
+                    style: TextStyle(
+                      fontSize: 70,
+                      fontFamily: "Actonia",
+                      color: warna.red,
+                    ),
+                  ),
+                  Text(
+                    "Welcome back, get back to exploring our amazing kicks.",
+                    style: TextStyle(color: warna.grey),
+                  ),
+                  SizedBox(
+                    height: tinggi / 17,
+                  ),
+                  TextInput(
+                      controller: nama, label: "nama,", icons: Icons.person),
+                  TextInput(
+                    controller: email,
+                    label: "Email",
+                    icons: Icons.email,
+                  ),
+                  TextInput(
+                    controller: password,
+                    icons: Icons.lock,
+                    label: "Password",
+                  ),
+                  ValueListenableBuilder<String?>(
+                    valueListenable: selectedRole,
+                    builder: (context, value, child) {
+                      return DropdownMenu(
+                        inputDecorationTheme: InputDecorationTheme(
+                            border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        )),
+                        width: lebar / 1.5,
+                        dropdownMenuEntries: const [
+                          DropdownMenuEntry(label: "Admin", value: "admin"),
+                          DropdownMenuEntry(label: "User", value: "user"),
+                        ],
+                        onSelected: (String? selectedValue) {
+                          selectedRole.value = selectedValue;
+                        },
+                        initialSelection: selectedRole.value,
+                      );
                     },
-                    initialSelection: selectedRole.value,
-                  );
-                },
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BlocConsumer<AuthBloc, AuthState>(

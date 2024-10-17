@@ -87,15 +87,7 @@ class _DhasbroadState extends State<Dhasbroad> with TickerProviderStateMixin {
         ),
         body: role?.user?.role == "user" ? pengunjung() : Admin(),
         bottomNavigationBar: role?.user?.role == "user"
-            ? TombolRegister(
-                offsetAnimation: _offsetAnimation,
-                tinggi: tinggi / 8,
-                warna: warna.red,
-                onTap: () {
-                  print("ceated");
-                },
-                lebel: "Create Antrian",
-              )
+            ? Container(height: 1)
             : Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
