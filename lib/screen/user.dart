@@ -43,9 +43,9 @@ class _pengunjungState extends State<pengunjung> with TickerProviderStateMixin {
 
     _controller?.forward();
 
-    // _timer = Timer.periodic(Duration(seconds: 2), (timer) {
-    //   getantrinow();
-    // });
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      getantrinow();
+    });
   }
 
   void dispose() {
@@ -191,7 +191,7 @@ class _pengunjungState extends State<pengunjung> with TickerProviderStateMixin {
                 },
               ),
             ),
-            responantri.data == null
+            responantri.data == null || responantri.data!.isEmpty
                 ? Container()
                 : Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
@@ -222,16 +222,17 @@ class _pengunjungState extends State<pengunjung> with TickerProviderStateMixin {
                   )
           ],
         ),
-        bottomNavigationBar: responantri.data != null
-            ? null
-            : TombolRegister(
-                offsetAnimation: _offsetAnimation,
-                tinggi: tinggi / 8,
-                warna: warna.red,
-                onTap: () {
-                  createantri();
-                },
-                lebel: "Create Antrian",
-              ));
+        bottomNavigationBar:
+            responantri.data != null && responantri.data!.isNotEmpty
+                ? null
+                : TombolRegister(
+                    offsetAnimation: _offsetAnimation,
+                    tinggi: tinggi / 8,
+                    warna: warna.red,
+                    onTap: () {
+                      createantri();
+                    },
+                    lebel: "Create Antrian",
+                  ));
   }
 }

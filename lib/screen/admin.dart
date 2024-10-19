@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:antriku/help/help.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,11 +14,31 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+    // Memanggil event untuk mengambil data antrian
     context.read<AtrianBlocBloc>().add(AtrianEventBlocGetlist());
-    // context.read<AtrianBlocBloc>().add(AtrianEventBlocPending());
+    // Memulai Timer untuk memperbarui data setiap 2 detik
+    _startPeriodicUpdate();
+  }
+
+  void _startPeriodicUpdate() {
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      context.read<AtrianBlocBloc>().add(AtrianEventBlocGetlist());
+    });
+  }
+
+  void _stopPeriodicUpdate() {
+    _timer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _stopPeriodicUpdate(); // Hentikan Timer saat widget dihapus
+    super.dispose();
   }
 
   @override
@@ -25,24 +47,7 @@ class _AdminState extends State<Admin> {
       backgroundColor: warna.primary,
       body: Column(
         children: [
-          BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
-            listener: (context, state) {
-              if (state is AtrianstateBlocStateFailed) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-            builder: (context, state) {
-              if (state is AtrianstateBlocLoading) {
-                return Center(child: CircularProgressIndicator());
-              } else if (state is AtrianstateBlocStateListantrian) {
-                return buildAntrianContainer(state);
-              } else {
-                return Center(child: Text("No Data"));
-              }
-            },
-          ),
+          buildAntrianContainer(),
           Expanded(
             child: DefaultTabController(
               length: 3,
@@ -60,7 +65,7 @@ class _AdminState extends State<Admin> {
                       children: [
                         buildAntrianListView(),
                         buildPendingListView(),
-                        buildselesaiListView()
+                        buildSelesaiListView(),
                       ],
                     ),
                   ),
@@ -73,7 +78,7 @@ class _AdminState extends State<Admin> {
     );
   }
 
-  Widget buildAntrianContainer(AtrianstateBlocStateListantrian state) {
+  Widget buildAntrianContainer() {
     return Center(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -92,28 +97,46 @@ class _AdminState extends State<Admin> {
                   margin: EdgeInsets.only(top: 120),
                   height: containerHeight / 2,
                   width: containerWidth / 2,
-                  child: Column(
-                    children: [
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          "No. ${state.antrian?.nomor ?? "kosong"}",
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "Nama : ${state.antrian?.nama ?? "kosong"}",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  child: BlocBuilder<AtrianBlocBloc, AtrianBlocState>(
+                    builder: (context, state) {
+                      if (state is AtrianstateBlocLoading) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (state is AtrianstateBlocStateFailed) {
+                        return Center(
+                          child: Text("Error: ${state.message}"),
+                        );
+                      } else if (state is AtrianstateBlocStateListantrian) {
+                        return Column(
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                "No. ${state.antrian?.nomor ?? "kosong"}",
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "Nama : ${state.antrian?.nama ?? "kosong"}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Center(
+                          child: Text("No Data"),
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
@@ -125,8 +148,7 @@ class _AdminState extends State<Admin> {
   }
 
   Widget buildAntrianListView() {
-    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
-      listener: (context, state) {},
+    return BlocBuilder<AtrianBlocBloc, AtrianBlocState>(
       builder: (context, state) {
         if (state is AtrianstateBlocStateListantrian) {
           return ListView.builder(
@@ -147,13 +169,14 @@ class _AdminState extends State<Admin> {
 
   Widget buildAntrianItem(data) {
     return ListTile(
+      key: ValueKey(data.id), // Gunakan ValueKey untuk mendeteksi perubahan
       title: Text("Antrian: ${data.nomor}"),
       subtitle: Text("Nama: ${data.nama}"),
       trailing: ElevatedButton(
         onPressed: () {
           context
               .read<AtrianBlocBloc>()
-              .add(AtrianEventBlocStatus(id: data.id));
+              .add(AtrianEventBlocStatus(id: data.id.toString()));
         },
         child: Text("Panggil"),
       ),
@@ -161,17 +184,16 @@ class _AdminState extends State<Admin> {
   }
 
   Widget buildPendingListView() {
-    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
-      listener: (context, state) {},
+    return BlocBuilder<AtrianBlocBloc, AtrianBlocState>(
       builder: (context, state) {
         if (state is AtrianstateBlocStateListantrian) {
-          print(state.pendingdata?.length);
-
           return ListView.builder(
             itemCount: state.pendingdata?.length ?? 0,
             itemBuilder: (context, index) {
               var data = state.pendingdata![index];
               return ListTile(
+                key: ValueKey(
+                    data.id), // Gunakan ValueKey untuk mendeteksi perubahan
                 title: Text("Antrian: ${data.nomor}"),
                 subtitle: Text("Nama: ${data.nama}"),
                 trailing: ElevatedButton(
@@ -194,18 +216,17 @@ class _AdminState extends State<Admin> {
     );
   }
 
-  Widget buildselesaiListView() {
-    return BlocConsumer<AtrianBlocBloc, AtrianBlocState>(
-      listener: (context, state) {},
+  Widget buildSelesaiListView() {
+    return BlocBuilder<AtrianBlocBloc, AtrianBlocState>(
       builder: (context, state) {
         if (state is AtrianstateBlocStateListantrian) {
-          print(state.selesai?.length);
-
           return ListView.builder(
             itemCount: state.selesai?.length ?? 0,
             itemBuilder: (context, index) {
               var data = state.selesai![index];
               return ListTile(
+                key: ValueKey(
+                    data.id), // Gunakan ValueKey untuk mendeteksi perubahan
                 title: Text("Antrian: ${data.nomor}"),
                 subtitle: Text("Nama: ${data.nama}"),
                 trailing: ElevatedButton(
@@ -218,7 +239,7 @@ class _AdminState extends State<Admin> {
         } else if (state is AtrianstateBlocLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          return Center(child: Text("No Pending Data"));
+          return Center(child: Text("No Completed Data"));
         }
       },
     );

@@ -27,7 +27,7 @@ class AtrianBlocBloc extends Bloc<AtrianBlocEvent, AtrianBlocState> {
 
   Future<void> _getListAntrian(
       AtrianEventBlocGetlist event, Emitter<AtrianBlocState> emit) async {
-    emit(AtrianstateBlocLoading());
+    // emit(AtrianstateBlocLoading());
 
     try {
       var token = await _getToken();
